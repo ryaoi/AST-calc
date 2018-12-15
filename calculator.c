@@ -8,6 +8,8 @@
 enum keyword {
 	_INTEGER,
 	_PLUS,
+	_UNARYPLUS,
+	_UNARYMINUS,
 	_MINUS,
 	_MUL,
 	_DIV,
@@ -152,6 +154,18 @@ t_ast		*factor(t_parser *parser)
 	t_ast	*node;
 
 	token = parser->cur_token;
+	if (token->type == _MINUS)
+	{
+		eat(parser, _MINUS);
+		token->type = _UNARYMINUS;
+		return (create_ast(factor(parser), NULL, token));
+	}
+	if (token->type == _PLUS)
+	{
+		eat(parser, _PLUS);
+		token->type = _UNARYPLUS;
+		return (create_ast(factor(parser), NULL, token));
+	}
 	if (token->type == _INTEGER)
 	{
 		eat(parser, _INTEGER);
@@ -219,7 +233,11 @@ void	print_ast(t_ast *ast)
 
 int		interpret(t_ast *ast)
 {
-	if (ast->token->type == _PLUS)
+	if (ast->token->type == _UNARYPLUS)
+		return 1 * interpret(ast->right);
+	else if (ast->token->type == _UNARYMINUS)
+		return -1 * interpret(ast->right);
+	else if (ast->token->type == _PLUS)
 		return interpret(ast->right) + interpret(ast->left);
 	else if (ast->token->type == _MINUS)
 		return interpret(ast->right) - interpret(ast->left);
