@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
-
 enum keyword {
 	_INTEGER,
 	_PLUS,
@@ -136,7 +133,7 @@ void	eat(t_parser *parser, int type)
 	}
 }
 
-t_ast	*create_ast(t_ast *right, t_ast *left, t_token *token)
+t_ast	*create_ast(t_ast *left, t_ast *right, t_token *token)
 {
 	t_ast	*new;
 
@@ -234,17 +231,17 @@ void	print_ast(t_ast *ast)
 int		interpret(t_ast *ast)
 {
 	if (ast->token->type == _UNARYPLUS)
-		return 1 * interpret(ast->right);
+		return 1 * interpret(ast->left);
 	else if (ast->token->type == _UNARYMINUS)
-		return -1 * interpret(ast->right);
+		return -1 * interpret(ast->left);
 	else if (ast->token->type == _PLUS)
-		return interpret(ast->right) + interpret(ast->left);
+		return interpret(ast->left) + interpret(ast->right);
 	else if (ast->token->type == _MINUS)
-		return interpret(ast->right) - interpret(ast->left);
+		return interpret(ast->left) - interpret(ast->right);
 	else if (ast->token->type == _MUL)
-		return interpret(ast->right) * interpret(ast->left);
+		return interpret(ast->left) * interpret(ast->right);
 	else if (ast->token->type == _DIV)
-		return interpret(ast->right) / interpret(ast->left);
+		return interpret(ast->left) / interpret(ast->right);
 	else
 		return ast->token->value;
 	return 0;
